@@ -29,11 +29,16 @@ MY_SENSORS_CONFIG=\
 
 # RF24
 ifeq ($(MY_TRANSPORT),$(filter $(MY_TRANSPORT),rf24))
-MY_RF24_CONFIG=\
-	--my-transport=rf24 \
-	--my-rf24-irq-pin=$(MY_SENSORS_IRQ_PIN) \
-	--my-rf24-cs-pin=$(MY_SENSORS_CS_PIN) \
-	--my-rf24-ce-pin=$(MY_SENSORS_CE_PIN)
+MY_RF24_CONFIG=	--my-transport=rf24 
+ifdef MY_SENSORS_IRQ_PIN
+MY_RF24_CONFIG += --my-rf24-irq-pin=$(MY_SENSORS_IRQ_PIN) 
+endif
+ifdef MY_SENSORS_CS_PIN
+MY_RF24_CONFIG += --my-rf24-cs-pin=$(MY_SENSORS_CS_PIN) 
+endif
+ifdef MY_SENSORS_CE_PIN
+MY_RF24_CONFIG += --my-rf24-ce-pin=$(MY_SENSORS_CE_PIN)
+endif
 
 $(info Using RF24 transport: $(MY_RF24_CONFIG))
 
