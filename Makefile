@@ -141,6 +141,7 @@ endif
 MY_SGW := $(CWD)/priv/my_sensors/mysgw
 # MY_SENSORS_PATCHES := $(patsubst %.patch,%.patched,$(wildcard patches/my_sensors/*.patch))
 MY_SENSORS_SUBMODULE := c_src/MySensors
+MY_SENSORS_SUBMODULE_TARGET := $(MY_SENSORS_SUBMODULE)$(shell echo "/configure")
 
 .PHONY: all clean clean_my_sensors_patches my_sensors
 .DEFAULT_GOAL: all
@@ -155,13 +156,13 @@ all: $(MY_SGW)
 
 ifeq ($(shell if [ -d ".git" ]; then echo "git"; else echo "hex"; fi ), git)
 # If the .git dir exists, this was a git clone
-$(MY_SENSORS_SUBMODULE):
+$(MY_SENSORS_SUBMODULE_TARGET):
 	@[ "$(ls -A $(MY_SENSORS_SUBMODULE))" ] && : || git submodule update --init --recursive
 
 else
 
 # if not, this is a hex package (probably)
-$(MY_SENSORS_SUBMODULE):
+$(MY_SENSORS_SUBMODULE_TARGET):
 	mkdir -p c_src/
 	wget $(MY_SENSORS_URL) -O - | tar -xz -C c_src/
 	cd c_src/MySensors-$(MY_SENSORS_SUBMODULE_VERSION) && git init . && git add . && git commit -am "Fake"
@@ -169,7 +170,7 @@ $(MY_SENSORS_SUBMODULE):
 
 endif
 
-$(MY_SGW): $(MY_SENSORS_SUBMODULE) $(MY_SENSORS_PATCHES)
+$(MY_SGW): $(MY_SENSORS_SUBMODULE_TARGET) $(MY_SENSORS_PATCHES)
 	cd $(MY_SENSORS_SUBMODULE) && ./configure $(MY_SENSORS_CONFIG) && make
 
 clean_my_sensors_patches:
