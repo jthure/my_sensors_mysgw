@@ -1,9 +1,11 @@
 defmodule MySensors.MySGW.Mixfile do
   use Mix.Project
 
+  @app_name :my_sensors_mysgw
+
   def project do
     [
-      app: :my_sensors_mysgw,
+      app: @app_name,
       compilers: compilers(),
       make_clean: ["clean"],
       make_env: make_env(),
@@ -43,7 +45,11 @@ defmodule MySensors.MySGW.Mixfile do
   end
 
   defp make_env do
+    app_config = Application.get_all_env(@app_name)
+    |>Enum.into([])
+
     config = Mix.Project.config()
+    |> Keyword.merge(app_config)
 
     %{
       "MIX_TARGET" => config[:target] || System.get_env("MIX_TARGET") || "host",
